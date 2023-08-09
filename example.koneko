@@ -1,0 +1,6 @@
+int 'my int' = choose [1, 2, 3]
+app main = new app [
+  big #2d1d73 'your lucky number is:',
+  my int
+]
+render main
