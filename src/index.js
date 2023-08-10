@@ -12,5 +12,5 @@ export default function run (code) {
     const tokens = tokenize(code);
     console.log(tokens);
     const AST = parse(tokens);
-    console.log(AST);
+    console.dir(AST, { depth: null });
 }

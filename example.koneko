@@ -1,6 +1,6 @@
-int (my int) = choose [1, 2, 3]
-app main = new app [
-  big #2d1d73 'your lucky number is:',
-  (my int)
+int (my integer) = choose [1, 2, 3]
+app main = [
+  'your lucky number is:',
+  {big, #2d1d73} (my integer)
 ]
 render main

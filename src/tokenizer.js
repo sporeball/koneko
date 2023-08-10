@@ -6,6 +6,8 @@ const T = {
   closeParen: /^\)/,
   openBracket: /^\[/,
   closeBracket: /^\]/,
+  openBrace: /^\{/,
+  closeBrace: /^\}/,
   equals: /^=/,
   comma: /^,/,
   newline: /^\n/,
