@@ -1,6 +1,6 @@
 int (my integer) = choose [1, 2, 3]
 app main = [
-  'your lucky number is:',
+  {#000000} 'your lucky number is:',
   {big, #2d1d73} (my integer)
 ]
 render main

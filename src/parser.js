@@ -7,7 +7,7 @@ import { isCommandKeyword, isTypeKeyword } from "./util.js";
 function parseInteger (tokens) {
   const integer = tokens.shift();
   return {
-    type: 'integer',
+    type: 'int',
     value: Number(integer.value)
   };
 }
@@ -20,7 +20,7 @@ function parseString (tokens) {
   const string = tokens.shift();
   return {
     type: 'string',
-    value: string.value
+    value: string.value.slice(1, -1)
   };
 }
 /**
@@ -112,13 +112,14 @@ function parseOpenBracket (tokens) {
   }
   return {
     type: 'list',
-    items: list
+    value: list
   }
 }
 
 /**
  * parse an open brace
  * produces an attribute list, applied to an object
+ * TODO: don't repeat yourself
  * @param {object[]} tokens
  */
 function parseOpenBrace (tokens) {
@@ -185,13 +186,15 @@ function parseOpenBrace (tokens) {
     throw new Error('bare attribute list');
   }
   const object = eat(tokens);
+  // TODO: should lists be allowed to have attribute lists applied to them?
+  // TODO: object.type allowed to be 'element' only
   if (
     object.type !== 'identifier'
-    && object.type !== 'number'
+    && object.type !== 'int'
     && object.type !== 'string'
   ) {
     throw new Error(
-      `cannot apply attribute list (found object of type ${object.type}})`
+      `cannot apply attribute list (found object of type ${object.type})`
     );
   }
   // if both are true, return an AST node with the attributes applied
@@ -242,6 +245,9 @@ function parseType (tokens) {
   }
   tokens.shift();
   const value = eat(tokens);
+  if (tokens[0] && tokens[0].type !== 'newline') {
+    throw new Error('extra tokens found on right-hand side of definition');
+  }
   return {
     type: 'definition',
     objectType: type,
