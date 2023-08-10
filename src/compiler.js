@@ -148,5 +148,5 @@ export default function compile (AST) {
   for (const element of globalThis.koneko.renderValueIR) {
     htmlElements.push(`<${element.tag} style="${element.styles.join('; ')}">${element.value}</${element.tag}>`);
   }
-  return `<html><body>${htmlElements.join('')}</body></html>`;
+  return `<html><body>${htmlElements.join('')}</body></html>` + '\n';
 }

@@ -3,6 +3,7 @@
 import fs from 'fs';
 
 import run from './src/index.js';
+import serve from './src/server.js';
 
 function cli () {
   let code;
@@ -20,8 +21,12 @@ function cli () {
     throw new Error('file not found');
   }
   
-  // parse
-  run(code);
+  // compile
+  const compiled = run(code);
+  // write to a file
+  fs.writeFileSync(filename.slice(0, -7) + '.html', compiled);
+  // spin up a server
+  serve(filename.slice(0, -7) + '.html');
 }
 
 try {

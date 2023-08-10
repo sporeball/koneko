@@ -23,9 +23,11 @@ export default function run (code) {
   const AST = parse(tokens);
   console.log('finished');
   console.dir(AST, { depth: null });
-  // 3. create a compiled page from the AST
+  // 3. create HTML code from the AST
   console.log('compiling AST...');
   const compiled = compile(AST);
   console.log('finished');
   console.log(compiled);
+
+  return compiled;
 }
