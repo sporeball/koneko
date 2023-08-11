@@ -124,7 +124,7 @@ function elementIR (element) {
   if (element.type === 'string' || element.type === 'int') {
     IR.value = String(element.value);
   }
-  for (const attribute of element.attributes) {
+  for (const attribute of element.attributes || []) {
     if (attribute.value === 'big') {
       IR.tag = 'h1';
     }
@@ -157,7 +157,7 @@ export default function compileAST (AST) {
     .map(element => {
       return elementIR(element);
     });
-  // console.log('IR:', globalThis.koneko.renderValueIR);
+  console.log('IR:', globalThis.koneko.renderValueIR);
   // use the intermediate representations to turn each element into HTML
   let htmlElements = [];
   for (const element of globalThis.koneko.renderValueIR) {
