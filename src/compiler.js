@@ -121,6 +121,15 @@ function elementIR (element) {
     value: undefined,
     styles: [],
   };
+  switch (element.type) {
+    case 'string':
+    case 'int':
+      IR.value = String(element.value);
+      break;
+    case 'choice':
+      IR.value = `<script>document.write([${element.value.map(item => item.value).join(', ')}][Math.floor(Math.random() * ${element.value.length})])</script>` // ?!
+      break;
+  }
   if (element.type === 'string' || element.type === 'int') {
     IR.value = String(element.value);
   }
@@ -150,8 +159,8 @@ export default function compileAST (AST) {
   if (globalThis.koneko.renderValue === undefined) {
     throw new Error('compiler: missing render command');
   }
-  // console.log('render value:');
-  // console.dir(globalThis.koneko.renderValue, { depth: null });
+  console.log('render value:');
+  console.dir(globalThis.koneko.renderValue, { depth: null });
   // store the intermediate representation of every element to be rendered
   globalThis.koneko.renderValueIR = structuredClone(globalThis.koneko.renderValue)
     .map(element => {

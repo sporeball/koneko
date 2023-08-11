@@ -1,4 +1,4 @@
-int (my integer) = choose [1, 2, 3]
+int (my integer) = choice [1, 2, 3]
 app main = [
   {#000000} 'your lucky number is:',
   {big, #2d1d73} (my integer)

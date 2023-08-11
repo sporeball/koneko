@@ -28,8 +28,9 @@ function cli () {
   const compiled = compile(code);
   // write to a file
   fs.writeFileSync(filename.slice(0, -7) + '.html', compiled);
+  // TODO: only spin up a server if a flag is used
   // spin up a server
-  serve(filename.slice(0, -7) + '.html');
+  // serve(filename.slice(0, -7) + '.html');
 }
 
 try {

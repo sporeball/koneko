@@ -1,7 +1,4 @@
-const commands = [
-  'choose',
-  'render'
-];
+import { commands } from "./commands.js";
 
 /**
  * return whether a string is a type keyword
@@ -21,7 +18,7 @@ export function isTypeKeyword (str) {
  * @returns 
  */
 export function isCommandKeyword (str) {
-  return commands.includes(str);
+  return Object.keys(commands).includes(str);
 }
 
 /**

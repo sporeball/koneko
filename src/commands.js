@@ -1,9 +1,12 @@
 import { resolveIdentifier } from "./compiler.js";
 
-const choose = function (args) {
+const choice = function (args) {
   // TODO: assert that there is one argument of type list
   const [list] = args;
-  return list.value[Math.floor(Math.random() * list.value.length)];
+  return {
+    type: 'choice',
+    value: list.value
+  };
 }
 
 const render = function (args) {
@@ -12,6 +15,6 @@ const render = function (args) {
 }
 
 export const commands = {
-  choose,
+  choice,
   render
 }
