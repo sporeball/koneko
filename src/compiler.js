@@ -110,6 +110,11 @@ function call (command) {
   return commands[command.head](resolvedArgs);
 }
 
+/**
+ * return an element object's intermediate representation
+ * @param {object} element
+ * @returns {object}
+ */
 function elementIR (element) {
   const IR = {
     tag: 'p',
@@ -130,23 +135,34 @@ function elementIR (element) {
   return IR;
 }
 
-export default function compile (AST) {
+/**
+ * compile an AST to HTML
+ * @param {object[]} AST
+ * @returns {string}
+ */
+export default function compileAST (AST) {
+  // evaluate each node in the AST
   for (const node of AST) {
     evaluateASTNode(node);
   }
+  // the `render` command must be used somewhere in the program, to produce
+  // a list of elements to render; otherwise, there is nothing to do
   if (globalThis.koneko.renderValue === undefined) {
     throw new Error('compiler: missing render command');
   }
   // console.log('render value:');
   // console.dir(globalThis.koneko.renderValue, { depth: null });
+  // store the intermediate representation of every element to be rendered
   globalThis.koneko.renderValueIR = structuredClone(globalThis.koneko.renderValue)
     .map(element => {
       return elementIR(element);
     });
   // console.log('IR:', globalThis.koneko.renderValueIR);
+  // use the intermediate representations to turn each element into HTML
   let htmlElements = [];
   for (const element of globalThis.koneko.renderValueIR) {
     htmlElements.push(`<${element.tag} style="${element.styles.join('; ')}">${element.value}</${element.tag}>`);
   }
+  // and return a complete document
   return `<html><body>${htmlElements.join('')}</body></html>` + '\n';
 }

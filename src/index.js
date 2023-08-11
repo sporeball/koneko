@@ -1,8 +1,13 @@
 import tokenize from './tokenizer.js';
 import parse from './parser.js';
-import compile from './compiler.js';
+import compileAST from './compiler.js';
 
-export default function run (code) {
+/**
+ * compile koneko code into HTML
+ * @param {string} code
+ * @returns {string}
+ */
+export default function compile (code) {
   globalThis.koneko = {
     objects: {}
   };
@@ -25,7 +30,7 @@ export default function run (code) {
   console.dir(AST, { depth: null });
   // 3. create HTML code from the AST
   console.log('compiling AST...');
-  const compiled = compile(AST);
+  const compiled = compileAST(AST);
   console.log('finished');
   console.log(compiled);
 

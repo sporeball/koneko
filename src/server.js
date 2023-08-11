@@ -2,6 +2,10 @@ import fs from 'fs';
 import http from 'http';
 import path from 'path';
 
+/**
+ * take an HTML file created by koneko, and serve it on localhost:8080
+ * @param {string} htmlFile
+ */
 export default function serve (htmlFile) {
   let html;
   try {

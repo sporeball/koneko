@@ -2,9 +2,12 @@
 
 import fs from 'fs';
 
-import run from './src/index.js';
+import compile from './src/index.js';
 import serve from './src/server.js';
 
+/**
+ * koneko CLI
+ */
 function cli () {
   let code;
   let filename = process.argv[2];
@@ -22,7 +25,7 @@ function cli () {
   }
   
   // compile
-  const compiled = run(code);
+  const compiled = compile(code);
   // write to a file
   fs.writeFileSync(filename.slice(0, -7) + '.html', compiled);
   // spin up a server

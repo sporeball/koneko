@@ -16,6 +16,14 @@ const T = {
   identifier: /^[a-z]+/g
 };
 
+/**
+ * match a string against a matcher value
+ * returns undefined if there is no match
+ * TODO: `matcher` of type `string` has stopped working
+ * @param {string} value
+ * @param {string|RegExp} matcher
+ * @returns {string|undefined}
+ */
 function stringMatch (value, matcher) {
   if (typeof matcher === 'string') {
     return (
