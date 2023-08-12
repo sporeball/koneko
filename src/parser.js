@@ -191,10 +191,12 @@ function parseOpenBrace (tokens) {
     object.type !== 'string'
   ) {
     throw new Error(
-      `cannot apply attribute list (found object of type ${object.type})`
+      `cannot apply attribute list to object of type ${object.type}`
     );
   }
   // if both are true, return an AST node with the attributes applied
+  // TODO: this format does not allow for an attribute list to be applied to
+  // the result of a command (value becomes `undefined`)
   return {
     type: object.type,
     value: object.value,

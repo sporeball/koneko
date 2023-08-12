@@ -1,6 +1,13 @@
 import { commands } from './commands.js';
 import { typeOf } from './util.js';
 
+// TODO: is there a better place to put this?
+const stylesheet = `<style>
+* { margin: 0; border: 0; box-sizing:border-box; padding: 0 }
+body { background-color: #dad3f4; color: #222; font-family: sans-serif; margin: auto; padding: 2ch }
+</style>
+`
+
 /**
  * evaluate an AST node
  * @param {object} ASTNode
@@ -178,5 +185,5 @@ export default function compileAST (AST) {
     htmlElements.push(`<${element.tag} style="${element.styles.join('; ')}">${element.value}</${element.tag}>`);
   }
   // and return a complete document
-  return `<html><body>${htmlElements.join('')}</body></html>` + '\n';
+  return `<html>${stylesheet}<body>${htmlElements.join('')}</body></html>` + '\n';
 }
