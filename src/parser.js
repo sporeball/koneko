@@ -33,9 +33,10 @@ function parseOpenParen (tokens) {
   tokens.shift(); // skip the parenthesis
   const identifiers = [];
   while (true) {
+    // TODO: remove this block?
     // if the next token is a newline, the closing parenthesis is missing
     if (tokens[0] === undefined || tokens[0]?.type === 'newline') {
-      throw new Error('unmatched parenthesis');
+      throw new Error('parser: unmatched parenthesis');
     }
     // if the next token is a short identifier, add it to the long identifier
     if (tokens[0] && tokens[0].type === 'identifier') {
@@ -47,10 +48,12 @@ function parseOpenParen (tokens) {
       tokens.shift();
       break;
     }
-    throw new Error(`invalid token in long identifier: ${tokens[0].value}`);
+    throw new Error(
+      `parser: invalid token in long identifier: ${tokens[0].value}`
+    );
   }
   if (identifiers.length === 0) {
-    throw new Error('empty long identifier');
+    throw new Error('parser: empty long identifier');
   }
   return {
     type: 'identifier',
@@ -69,7 +72,7 @@ function parseOpenBracket (tokens) {
   while (true) {
     // if there are no more tokens, the array is missing a closing bracket
     if (tokens[0] === undefined) {
-      throw new Error('unmatched bracket');
+      throw new Error('parser: unmatched bracket');
     }
     // if the first token remaining is a newline, skip it
     if (tokens[0].type === 'newline') {
@@ -79,7 +82,7 @@ function parseOpenBracket (tokens) {
     // if the first token remaining is a comma, the list items are not properly
     // separated
     if (tokens[0].type === 'comma') {
-      throw new Error('misplaced comma in list');
+      throw new Error('parser: misplaced comma in list');
     }
     // if the first token remaining is not a close bracket, take the result of
     // eating some tokens and add it to the list
@@ -101,12 +104,12 @@ function parseOpenBracket (tokens) {
       // now, if the first token remaining is a close bracket, the comma
       // is extraneous
       if (tokens[0] && tokens[0].type === 'closeBracket') {
-        throw new Error('misplaced comma in list');
+        throw new Error('parser: misplaced comma in list');
       }
     // in any other case, the current and next list item are not properly
     // separated
     } else {
-      throw new Error('list items not properly separated');
+      throw new Error('parser: list items not properly separated');
     }
   }
   return {
@@ -127,7 +130,7 @@ function parseOpenBrace (tokens) {
   while (true) {
     // if there are no more tokens, the attribute list is missing a closing brace
     if (tokens[0] === undefined) {
-      throw new Error('unmatched brace');
+      throw new Error('parser: unmatched brace');
     }
     // if the first token remaining is a newline, skip it
     if (tokens[0].type === 'newline') {
@@ -137,7 +140,7 @@ function parseOpenBrace (tokens) {
     // if the first token remaining is a comma, the attribute list items are
     // not properly separated
     if (tokens[0].type === 'comma') {
-      throw new Error('misplaced comma in attribute list');
+      throw new Error('parser: misplaced comma in attribute list');
     }
     // if the first token remaining is not a close bracket, take the result of
     // eating some tokens and add it to the list
@@ -160,12 +163,12 @@ function parseOpenBrace (tokens) {
       // now, if the first token remaining is a close brace, the comma
       // is extraneous
       if (tokens[0] && tokens[0].type === 'closeBrace') {
-        throw new Error('misplaced comma in attribute list');
+        throw new Error('parser: misplaced comma in attrFibute list');
       }
     // in any other case, the current and next attribute list item are not
     // properly separated
     } else {
-      throw new Error('attribute list items not properly separated');
+      throw new Error('parser: attribute list items not properly separated');
     }
   }
   // now, the attribute list is finished.
@@ -176,11 +179,11 @@ function parseOpenBrace (tokens) {
       attribute.type === 'color'
     );
   })) {
-    throw new Error('invalid attribute in attribute list');
+    throw new Error('parser: invalid attribute in attribute list');
   }
   // and that it is actually being applied to a valid object
   if (tokens[0] === undefined) {
-    throw new Error('bare attribute list');
+    throw new Error('parser: bare attribute list');
   }
   const object = eat(tokens);
   // TODO: should lists be allowed to have attribute lists applied to them?
@@ -235,17 +238,20 @@ function parseCommand (tokens) {
  */
 function parseType (tokens) {
   const type = tokens.shift().value;
+  // TODO: probably generalize this to appear in more places
   if (tokens[0] === undefined) {
-    throw new Error(`bare token: ${type.value}`);
+    throw new Error(`parser: bare token: ${type.value}`);
   }
-  const identifier = eat(tokens).value;
+  const identifier = eat(tokens, 'identifier').value;
   if (tokens[0]?.type !== 'equals') {
-    throw new Error('missing equals sign');
+    throw new Error('parser: missing equals sign');
   }
   tokens.shift();
   const value = eat(tokens);
   if (tokens[0] && tokens[0].type !== 'newline') {
-    throw new Error('extra tokens found on right-hand side of definition');
+    throw new Error(
+      'parser: extra tokens found on right-hand side of definition'
+    );
   }
   return {
     type: 'definition',
@@ -280,28 +286,49 @@ function parseIdentifier (tokens) {
  * take an array of tokens, and remove some of them from the start,
  * producing a structure
  * @param {object[]} tokens
+ * @param {string} [type]
  * @returns {object}
  */
-function eat (tokens) {
+function eat (tokens, type) {
+  let eaten;
   switch (tokens[0].type) {
     case 'integer':
-      return parseInteger(tokens);
+      eaten = parseInteger(tokens);
+      break;
     case 'string':
-      return parseString(tokens);
+      eaten = parseString(tokens);
+      break;
     case 'openParen':
-      return parseOpenParen(tokens);
+      eaten = parseOpenParen(tokens);
+      break;
     case 'openBracket':
-      return parseOpenBracket(tokens);
+      eaten = parseOpenBracket(tokens);
+      break;
     case 'openBrace':
-      return parseOpenBrace(tokens);
+      eaten = parseOpenBrace(tokens);
+      break;
     case 'newline':
-      return tokens.shift();
+      eaten = tokens.shift();
+      break;
     case 'color':
-      return tokens.shift();
+      eaten = tokens.shift();
+      break;
     case 'identifier':
-      return parseIdentifier(tokens);
+      eaten = parseIdentifier(tokens);
+      break;
   }
-  throw new Error(`parser: no matching rule found: ${tokens[0].type}`);
+  // at this point, if there is no parsing rule for the token, it will be left
+  // on the top of the token stream
+  if (type !== undefined && eaten?.type !== type) {
+    throw new Error(
+      `parser: expected token of type ${type}, found ${eaten?.type || tokens[0].type} instead`
+    );
+  }
+  // rule check
+  if (eaten === undefined) {
+    throw new Error(`parser: no matching rule found: ${tokens[0].type}`);
+  }
+  return eaten;
 }
 
 /**
