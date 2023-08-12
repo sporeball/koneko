@@ -8,9 +8,11 @@ import compileAST from './compiler.js';
  * @returns {string}
  */
 export default function compile (code) {
+  // pollution
   globalThis.koneko = {
     objects: {}
   };
+
   code = code.trim()
     .split('\n')
     .map(line => line.replace(/;.*/gm, '').trim()) // clean

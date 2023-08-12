@@ -1,16 +1,18 @@
+import { escape } from "./util.js";
+
 // object of match values for the different token types
 const T = {
   integer: /^0|^-?[1-9]\d*/g,
   string: /^'.*?'/g,
-  openParen: /^\(/,
-  closeParen: /^\)/,
-  openBracket: /^\[/,
-  closeBracket: /^\]/,
-  openBrace: /^\{/,
-  closeBrace: /^\}/,
-  equals: /^=/,
-  comma: /^,/,
-  newline: /^\n/,
+  openParen: '(',
+  closeParen: ')',
+  openBracket: '[',
+  closeBracket: ']',
+  openBrace: '{',
+  closeBrace: '}',
+  equals: '=',
+  comma: ',',
+  newline: '\n',
   whitespace: /^\s+/g,
   color: /^#[0-9a-f]{6}/,
   identifier: /^[a-z]+/g

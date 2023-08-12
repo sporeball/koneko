@@ -23,6 +23,7 @@ function parseString (tokens) {
     value: string.value.slice(1, -1)
   };
 }
+
 /**
  * parse an open parenthesis
  * produces a long identifier
