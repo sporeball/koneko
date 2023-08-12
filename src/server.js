@@ -21,4 +21,9 @@ export default function serve (htmlFile) {
   server.listen(8080, 'localhost', () => {
     console.log(`serving ${htmlFile} on http://localhost:8080`);
   })
+  process.on('SIGINT', function () {
+    server.close(function () {
+      console.log('\nserver closed');
+    });
+  });
 }

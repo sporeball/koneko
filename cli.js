@@ -11,6 +11,7 @@ import serve from './src/server.js';
 function cli () {
   let code;
   let filename = process.argv[2];
+  const args = process.argv.slice(3);
   if (filename === undefined) {
     throw new Error('no filename given');
   }
@@ -28,9 +29,10 @@ function cli () {
   const compiled = compile(code);
   // write to a file
   fs.writeFileSync(filename.slice(0, -7) + '.html', compiled);
-  // TODO: only spin up a server if a flag is used
   // spin up a server
-  // serve(filename.slice(0, -7) + '.html');
+  if (args.includes('--serve')) {
+    serve(filename.slice(0, -7) + '.html');
+  }
 }
 
 try {
