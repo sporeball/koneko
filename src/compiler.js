@@ -160,14 +160,18 @@ export default function compileAST (AST) {
   if (globalThis.koneko.renderValue === undefined) {
     throw new Error('compiler: missing render command');
   }
-  console.log('render value:');
-  console.dir(globalThis.koneko.renderValue, { depth: null });
+  if (globalThis.koneko.debug) {
+    console.log('render value:');
+    console.dir(globalThis.koneko.renderValue, { depth: null });
+  }
   // store the intermediate representation of every element to be rendered
   globalThis.koneko.renderValueIR = structuredClone(globalThis.koneko.renderValue)
     .map(element => {
       return elementIR(element);
     });
-  console.log('IR:', globalThis.koneko.renderValueIR);
+  if (globalThis.koneko.debug) {
+    console.log('IR:', globalThis.koneko.renderValueIR);
+  }
   // use the intermediate representations to turn each element into HTML
   const htmlElements = [];
   for (const element of globalThis.koneko.renderValueIR) {

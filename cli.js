@@ -2,6 +2,8 @@
 
 import fs from 'fs';
 
+import colors from 'picocolors';
+
 import compile from './src/index.js';
 import serve from './src/server.js';
 
@@ -26,9 +28,10 @@ function cli () {
   }
 
   // compile
-  const compiled = compile(code);
+  const compiled = compile(code, args);
   // write to a file
   fs.writeFileSync(filename.slice(0, -7) + '.html', compiled);
+  console.log(`wrote output to ${colors.cyan(filename.slice(0, -7) + '.html')}`);
   // spin up a server
   if (args.includes('--serve')) {
     serve(filename.slice(0, -7) + '.html');

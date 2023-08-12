@@ -21,7 +21,6 @@ const T = {
 /**
  * match a string against a matcher value
  * returns undefined if there is no match
- * TODO: `matcher` of type `string` has stopped working
  * @param {string} value
  * @param {string|RegExp} matcher
  * @returns {string|undefined}
@@ -44,10 +43,11 @@ function stringMatch (value, matcher) {
  */
 export default function tokenize (code) {
   let tokens = [];
+  const tokenTypes = Object.entries(T);
   // while there is still code to tokenize...
   while (code.length > 0) {
     // find the first expression
-    const expr = Object.entries(T)
+    const expr = tokenTypes
       // which the code matches,
       .find(entry => {
         return stringMatch(code, entry[1]) !== undefined;

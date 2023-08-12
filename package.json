@@ -22,5 +22,10 @@
   "bugs": {
     "url": "https://github.com/sporeball/koneko/issues"
   },
-  "homepage": "https://github.com/sporeball/koneko#readme"
+  "homepage": "https://github.com/sporeball/koneko#readme",
+  "dependencies": {
+    "log-update": "^5.0.1",
+    "picocolors": "^1.0.0",
+    "time-span": "^5.1.0"
+  }
 }

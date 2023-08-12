@@ -1,3 +1,7 @@
+import logUpdate from 'log-update';
+import colors from 'picocolors';
+import timeSpan from 'time-span';
+
 import tokenize from './tokenizer.js';
 import parse from './parser.js';
 import compileAST from './compiler.js';
@@ -5,11 +9,13 @@ import compileAST from './compiler.js';
 /**
  * compile koneko code into HTML
  * @param {string} code
+ * @param {string[]} args
  * @returns {string}
  */
-export default function compile (code) {
+export default function compile (code, args) {
   // pollution
   globalThis.koneko = {
+    debug: args.includes('--debug'),
     objects: {}
   };
 
@@ -18,23 +24,35 @@ export default function compile (code) {
     .map(line => line.replace(/;.*/gm, '').trim()) // clean
     .join('\n');
 
-  console.log(code);
-
   // 1. tokenize the code
-  console.log('tokenizing code...');
+  let t = timeSpan();
+  logUpdate('tokenizing code...');
   const tokens = tokenize(code);
-  console.log('finished');
-  console.log(tokens);
+  logUpdate(`tokenizing code... ${colors.green('done')} (${t()}ms)`);
+  logUpdate.done();
+  if (args.includes('--debug')) {
+    console.log(tokens);
+  }
+
   // 2. create an AST from the tokens
-  console.log('creating AST...');
+  t = timeSpan();
+  logUpdate('creating AST...');
   const AST = parse(tokens);
-  console.log('finished');
-  console.dir(AST, { depth: null });
+  logUpdate(`creating AST... ${colors.green('done')} (${t()}ms)`);
+  logUpdate.done();
+  if (args.includes('--debug')) {
+    console.dir(AST, { depth: null });
+  }
+
   // 3. create HTML code from the AST
-  console.log('compiling AST...');
+  t = timeSpan();
+  logUpdate('compiling AST...');
   const compiled = compileAST(AST);
-  console.log('finished');
-  console.log(compiled);
+  logUpdate(`compiling AST... ${colors.green('done')} (${t()}ms)`);
+  logUpdate.done();
+  if (args.includes('--debug')) {
+    console.log(compiled);
+  }
 
   return compiled;
 }
