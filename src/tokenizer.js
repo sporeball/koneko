@@ -1,4 +1,4 @@
-import { escape } from "./util.js";
+import { escape } from './util.js';
 
 // object of match values for the different token types
 const T = {

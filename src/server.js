@@ -14,13 +14,13 @@ export default function serve (htmlFile) {
     throw new Error(`server: could not read HTML file ${htmlFile}`);
   }
   const server = http.createServer(function (req, res) {
-    res.setHeader("Content-Type", "text/html");
+    res.setHeader('Content-Type', 'text/html');
     res.writeHead(200);
     res.end(html);
   });
   server.listen(8080, 'localhost', () => {
     console.log(`serving ${htmlFile} on http://localhost:8080`);
-  })
+  });
   process.on('SIGINT', function () {
     server.close(function () {
       console.log('\nserver closed');

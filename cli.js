@@ -10,13 +10,13 @@ import serve from './src/server.js';
  */
 function cli () {
   let code;
-  let filename = process.argv[2];
+  const filename = process.argv[2];
   const args = process.argv.slice(3);
   if (filename === undefined) {
     throw new Error('no filename given');
   }
   if (!filename.endsWith('.koneko')) {
-    throw new Error('invalid filetype')
+    throw new Error('invalid filetype');
   }
   // read
   try {
@@ -24,7 +24,7 @@ function cli () {
   } catch (e) {
     throw new Error('file not found');
   }
-  
+
   // compile
   const compiled = compile(code);
   // write to a file

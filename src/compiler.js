@@ -1,5 +1,5 @@
 import { commands } from './commands.js';
-import { typeOf } from "./util.js";
+import { typeOf } from './util.js';
 
 /**
  * evaluate an AST node
@@ -39,7 +39,7 @@ function resolveDefinition (definition) {
     if (typeOf(value) !== 'list') {
       throw new Error(
         `compiler: object of type app assigned value of type ${typeOf(value)}`
-      )
+      );
     }
     // if this passes, change the type from 'list' to 'app'
     value.type = 'app';
@@ -86,10 +86,11 @@ function valueFromNode (node) {
       return node;
     case 'identifier':
       return resolveIdentifier(node);
-    case 'list':
+    case 'list': {
       const newNode = Object.assign({}, node);
       newNode.value = newNode.value.map(valueFromNode);
       return newNode;
+    }
   }
 }
 
@@ -119,7 +120,7 @@ function elementIR (element) {
   const IR = {
     tag: 'p',
     value: undefined,
-    styles: [],
+    styles: []
   };
   switch (element.type) {
     case 'string':
@@ -127,7 +128,7 @@ function elementIR (element) {
       IR.value = String(element.value);
       break;
     case 'choice':
-      IR.value = `<script>document.write([${element.value.map(item => item.value).join(', ')}][Math.floor(Math.random() * ${element.value.length})])</script>` // ?!
+      IR.value = `<script>document.write([${element.value.map(item => item.value).join(', ')}][Math.floor(Math.random() * ${element.value.length})])</script>`; // ?!
       break;
   }
   if (element.type === 'string' || element.type === 'int') {
@@ -168,7 +169,7 @@ export default function compileAST (AST) {
     });
   console.log('IR:', globalThis.koneko.renderValueIR);
   // use the intermediate representations to turn each element into HTML
-  let htmlElements = [];
+  const htmlElements = [];
   for (const element of globalThis.koneko.renderValueIR) {
     htmlElements.push(`<${element.tag} style="${element.styles.join('; ')}">${element.value}</${element.tag}>`);
   }

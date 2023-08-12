@@ -1,8 +1,8 @@
-import { commands } from "./commands.js";
+import { commands } from './commands.js';
 
 /**
  * return whether a string is a type keyword
- * @param {string} str 
+ * @param {string} str
  */
 export function isTypeKeyword (str) {
   return (
@@ -15,7 +15,6 @@ export function isTypeKeyword (str) {
 /**
  * return whether a string is a command keyword
  * @param {string} str
- * @returns 
  */
 export function isCommandKeyword (str) {
   return Object.keys(commands).includes(str);
