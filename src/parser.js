@@ -319,6 +319,7 @@ function eat (tokens, type) {
   }
   // at this point, if there is no parsing rule for the token, it will be left
   // on the top of the token stream
+  // type check
   if (type !== undefined && eaten?.type !== type) {
     throw new Error(
       `parser: expected token of type ${type}, found ${eaten?.type || tokens[0].type} instead`

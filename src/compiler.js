@@ -6,7 +6,7 @@ const stylesheet = `<style>
 * { margin: 0; border: 0; box-sizing:border-box; padding: 0 }
 body { background-color: #dad3f4; color: #222; font-family: sans-serif; margin: auto; padding: 2ch }
 </style>
-`
+`;
 
 /**
  * evaluate an AST node
@@ -120,6 +120,7 @@ function call (command) {
 
 /**
  * return an element object's intermediate representation
+ * TODO: memoization
  * @param {object} element
  * @returns {object}
  */
@@ -137,9 +138,6 @@ function elementIR (element) {
     case 'choice':
       IR.value = `<script>document.write([${element.value.map(item => item.value).join(', ')}][Math.floor(Math.random() * ${element.value.length})])</script>`; // ?!
       break;
-  }
-  if (element.type === 'string' || element.type === 'int') {
-    IR.value = String(element.value);
   }
   for (const attribute of element.attributes || []) {
     if (attribute.value === 'big') {
@@ -182,7 +180,9 @@ export default function compileAST (AST) {
   // use the intermediate representations to turn each element into HTML
   const htmlElements = [];
   for (const element of globalThis.koneko.renderValueIR) {
-    htmlElements.push(`<${element.tag} style="${element.styles.join('; ')}">${element.value}</${element.tag}>`);
+    htmlElements.push(
+      `<${element.tag} style="${element.styles.join('; ')}">${element.value}</${element.tag}>`
+    );
   }
   // and return a complete document
   return `<html>${stylesheet}<body>${htmlElements.join('')}</body></html>` + '\n';

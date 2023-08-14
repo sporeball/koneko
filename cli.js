@@ -27,6 +27,13 @@ function cli () {
     throw new Error('file not found');
   }
 
+  // TODO: if you really want to do this, maybe get rid of the comments in this
+  // function instead?
+  // if (code.trim() === '') {
+  //   console.log('there is nothing to do');
+  //   return;
+  // }
+
   // compile
   const compiled = compile(code, args);
   // write to a file
