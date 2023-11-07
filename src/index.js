@@ -7,6 +7,22 @@ import parse from './parser.js';
 import compileAST from './compiler.js';
 
 /**
+ * perform a compilation step
+ * @param {string} name what this step does
+ * @param {function} cb a 1-argument function to return the result of
+ * @param {*} arg the argument to `cb`
+ * @returns {*}
+ */
+function compilationStep (name, cb, arg) {
+  let t = timeSpan();
+  logUpdate(`${name}...`);
+  const result = cb(arg);
+  logUpdate(`${name}... ${colors.green('done')} (${t()}ms)`);
+  logUpdate.done();
+  return result;
+}
+
+/**
  * compile koneko code into HTML
  * @param {string} code
  * @param {string[]} args
@@ -25,31 +41,19 @@ export default function compile (code, args) {
     .join('\n');
 
   // 1. tokenize the code
-  let t = timeSpan();
-  logUpdate('tokenizing code...');
-  const tokens = tokenize(code);
-  logUpdate(`tokenizing code... ${colors.green('done')} (${t()}ms)`);
-  logUpdate.done();
+  const tokens = compilationStep('tokenizing code', tokenize, code);
   if (args.includes('--debug')) {
     console.log(tokens);
   }
 
   // 2. create an AST from the tokens
-  t = timeSpan();
-  logUpdate('creating AST...');
-  const AST = parse(tokens);
-  logUpdate(`creating AST... ${colors.green('done')} (${t()}ms)`);
-  logUpdate.done();
+  const AST = compilationStep('creating AST', parse, tokens);
   if (args.includes('--debug')) {
     console.dir(AST, { depth: null });
   }
 
   // 3. create HTML code from the AST
-  t = timeSpan();
-  logUpdate('compiling AST...');
-  const compiled = compileAST(AST);
-  logUpdate(`compiling AST... ${colors.green('done')} (${t()}ms)`);
-  logUpdate.done();
+  const compiled = compilationStep('compiling AST', compileAST, AST);
   if (args.includes('--debug')) {
     console.log(compiled);
   }
