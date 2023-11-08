@@ -1,4 +1,4 @@
-import { commands } from './commands.js';
+import commands from './commands.js';
 
 /**
  * return whether a string is a type keyword

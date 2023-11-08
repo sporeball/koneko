@@ -12,7 +12,7 @@ const render = function (args) {
   globalThis.koneko.renderValue = structuredClone(app.value);
 };
 
-export const commands = {
+export default {
   choice,
-  render
+  render,
 };

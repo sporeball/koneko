@@ -1,10 +1,10 @@
-import logUpdate from 'log-update';
 import colors from 'picocolors';
 import timeSpan from 'time-span';
 
 import tokenize from './tokenizer.js';
 import parse from './parser.js';
 import compileAST from './compiler.js';
+import logger from './logger.js';
 
 /**
  * perform a compilation step
@@ -15,10 +15,9 @@ import compileAST from './compiler.js';
  */
 function compilationStep (name, cb, arg) {
   let t = timeSpan();
-  logUpdate(`${name}...`);
+  logger.info(`${name}...`);
   const result = cb(arg);
-  logUpdate(`${name}... ${colors.green('done')} (${t()}ms)`);
-  logUpdate.done();
+  logger.info(`${colors.green('finished')} in ${t()}ms`);
   return result;
 }
 
@@ -42,21 +41,15 @@ export default function compile (code, args) {
 
   // 1. tokenize the code
   const tokens = compilationStep('tokenizing code', tokenize, code);
-  if (args.includes('--debug')) {
-    console.log(tokens);
-  }
+  logger.debug('tokens', tokens);
 
   // 2. create an AST from the tokens
   const AST = compilationStep('creating AST', parse, tokens);
-  if (args.includes('--debug')) {
-    console.dir(AST, { depth: null });
-  }
+  logger.debug('AST', AST);
 
   // 3. create HTML code from the AST
   const compiled = compilationStep('compiling AST', compileAST, AST);
-  if (args.includes('--debug')) {
-    console.log(compiled);
-  }
+  logger.debug('HTML output', compiled);
 
   return compiled;
 }

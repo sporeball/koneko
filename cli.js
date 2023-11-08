@@ -6,6 +6,7 @@ import colors from 'picocolors';
 
 import compile from './src/index.js';
 import serve from './src/server.js';
+import logger from './src/logger.js';
 
 /**
  * koneko CLI
@@ -38,7 +39,7 @@ function cli () {
   const compiled = compile(code, args);
   // write to a file
   fs.writeFileSync(filename.slice(0, -7) + '.html', compiled);
-  console.log(`wrote output to ${colors.cyan(filename.slice(0, -7) + '.html')}`);
+  logger.info(`wrote output to ${colors.cyan(filename.slice(0, -7) + '.html')}`);
   // spin up a server
   if (args.includes('--serve')) {
     serve(filename.slice(0, -7) + '.html');
@@ -48,6 +49,6 @@ function cli () {
 try {
   cli();
 } catch (e) {
-  console.log(e);
+  logger.error(e.message);
   process.exit(1);
 }

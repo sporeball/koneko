@@ -1,5 +1,6 @@
-import { commands } from './commands.js';
+import commands from './commands.js';
 import { typeOf } from './util.js';
+import logger from './logger.js';
 
 // TODO: is there a better place to put this?
 const stylesheet = `<style>
@@ -165,18 +166,13 @@ export default function compileAST (AST) {
   if (globalThis.koneko.renderValue === undefined) {
     throw new Error('compiler: missing render command');
   }
-  if (globalThis.koneko.debug) {
-    console.log('render value:');
-    console.dir(globalThis.koneko.renderValue, { depth: null });
-  }
+  logger.debug('render value', globalThis.koneko.renderValue);
   // store the intermediate representation of every element to be rendered
   globalThis.koneko.renderValueIR = structuredClone(globalThis.koneko.renderValue)
     .map(element => {
       return elementIR(element);
     });
-  if (globalThis.koneko.debug) {
-    console.log('IR:', globalThis.koneko.renderValueIR);
-  }
+  logger.debug('IR', globalThis.koneko.renderValueIR);
   // use the intermediate representations to turn each element into HTML
   const htmlElements = [];
   for (const element of globalThis.koneko.renderValueIR) {

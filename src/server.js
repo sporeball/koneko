@@ -2,6 +2,8 @@ import fs from 'fs';
 import http from 'http';
 import path from 'path';
 
+import logger from './logger.js';
+
 /**
  * take an HTML file created by koneko, and serve it on localhost:8080
  * @param {string} htmlFile
@@ -19,11 +21,12 @@ export default function serve (htmlFile) {
     res.end(html);
   });
   server.listen(8080, 'localhost', () => {
-    console.log(`serving ${htmlFile} on http://localhost:8080`);
+    logger.info(`serving ${htmlFile} on http://localhost:8080`);
   });
   process.on('SIGINT', function () {
     server.close(function () {
-      console.log('\nserver closed');
+      console.log('');
+      logger.info('server closed');
     });
   });
 }
