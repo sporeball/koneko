@@ -1,6 +1,6 @@
-int (my integer) = choice [1, 2, 3]
-app main = [
+lucky number = choose! [1, 2, 3]
+main = [
   {#000000} 'your lucky number is:',
-  {big, #2d1d73} (my integer)
+  {big, #2d1d73} lucky number
 ]
-render main
+render! main

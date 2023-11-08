@@ -4,8 +4,8 @@ import { escape } from './util.js';
 const T = {
   integer: /^0|^-?[1-9]\d*/g,
   string: /^'.*?'/g,
-  openParen: '(',
-  closeParen: ')',
+  // openParen: '(',
+  // closeParen: ')',
   openBracket: '[',
   closeBracket: ']',
   openBrace: '{',
@@ -15,7 +15,8 @@ const T = {
   newline: '\n',
   whitespace: /^\s+/g,
   color: /^#[0-9a-f]{6}/,
-  identifier: /^[a-z]+/g
+  command: /^[a-z]+!/g,
+  word: /^[a-z]+/g
 };
 
 /**

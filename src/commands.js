@@ -1,4 +1,4 @@
-const choice = function (args) {
+const choose = function (args) {
   // TODO: assert that there is one argument of type list
   const [list] = args;
   return {
@@ -13,6 +13,6 @@ const render = function (args) {
 };
 
 export default {
-  choice,
+  choose,
   render,
 };

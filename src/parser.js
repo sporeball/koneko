@@ -1,4 +1,5 @@
 import { isCommandKeyword, isTypeKeyword } from './util.js';
+import logger from './logger.js';
 
 /**
  * parse an integer
@@ -21,43 +22,6 @@ function parseString (tokens) {
   return {
     type: 'string',
     value: string.value.slice(1, -1) // remove the single quotes
-  };
-}
-
-/**
- * parse an open parenthesis
- * produces a long identifier
- * @param {object[]} tokens
- */
-function parseOpenParen (tokens) {
-  tokens.shift(); // skip the parenthesis
-  const identifiers = [];
-  while (true) {
-    // TODO: remove this block?
-    // if the next token is a newline, the closing parenthesis is missing
-    if (tokens[0] === undefined || tokens[0]?.type === 'newline') {
-      throw new Error('parser: unmatched parenthesis');
-    }
-    // if the next token is a short identifier, add it to the long identifier
-    if (tokens[0] && tokens[0].type === 'identifier') {
-      identifiers.push(tokens.shift().value);
-      continue;
-    }
-    // if the next token is a closing parenthesis, break out of the loop
-    if (tokens[0] && tokens[0].type === 'closeParen') {
-      tokens.shift();
-      break;
-    }
-    throw new Error(
-      `parser: invalid token in long identifier: ${tokens[0].value}`
-    );
-  }
-  if (identifiers.length === 0) {
-    throw new Error('parser: empty long identifier');
-  }
-  return {
-    type: 'identifier',
-    value: identifiers.join(' ')
   };
 }
 
@@ -213,7 +177,7 @@ function parseOpenBrace (tokens) {
  * @param {object[]} tokens
  */
 function parseCommand (tokens) {
-  const head = tokens.shift().value;
+  const head = tokens.shift().value.slice(0, -1);
   const args = [];
   while (true) {
     if (tokens[0] === undefined) {
@@ -232,21 +196,12 @@ function parseCommand (tokens) {
 }
 
 /**
- * parse a type keyword
- * produces a definition
+ * parse a definition
  * @param {object[]} tokens
+ * @param {string} identifier taken from the left-hand side
  */
-function parseType (tokens) {
-  const type = tokens.shift().value;
-  // TODO: probably generalize this to appear in more places
-  if (tokens[0] === undefined) {
-    throw new Error(`parser: bare token: ${type.value}`);
-  }
-  const identifier = eat(tokens, 'identifier').value;
-  if (tokens[0]?.type !== 'equals') {
-    throw new Error('parser: missing equals sign');
-  }
-  tokens.shift();
+function parseDefinition (tokens, identifier) {
+  tokens.shift(); // remove the equals sign on the top of the token stream
   const value = eat(tokens);
   if (tokens[0] && tokens[0].type !== 'newline') {
     throw new Error(
@@ -255,30 +210,36 @@ function parseType (tokens) {
   }
   return {
     type: 'definition',
-    objectType: type,
     identifier,
     value
   };
 }
 
 /**
- * parse a short identifier
- * produces either a definition, command, or short identifier, depending on
- * the value
+ * parse a word
+ * produces an identifier or a definition
  * @param {object[]} tokens
  */
-function parseIdentifier (tokens) {
-  const identifier = tokens[0].value;
-  if (isTypeKeyword(identifier)) {
-    return parseType(tokens);
+function parseWord (tokens) {
+  let words = [];
+  while (true) {
+    if (tokens[0] === undefined) {
+      break;
+    }
+    if (tokens[0].type === 'newline') {
+      break;
+    }
+    if (tokens[0].type === 'equals') {
+      return parseDefinition(tokens, words.join(' '));
+    }
+    if (tokens[0].type !== 'word') {
+      break;
+    }
+    words.push(tokens.shift().value);
   }
-  if (isCommandKeyword(identifier)) {
-    return parseCommand(tokens);
-  }
-  tokens.shift();
   return {
     type: 'identifier',
-    value: identifier
+    value: words.join(' ')
   };
 }
 
@@ -313,8 +274,11 @@ function eat (tokens, type) {
     case 'color':
       eaten = tokens.shift();
       break;
-    case 'identifier':
-      eaten = parseIdentifier(tokens);
+    case 'command':
+      eaten = parseCommand(tokens);
+      break;
+    case 'word':
+      eaten = parseWord(tokens);
       break;
   }
   // at this point, if there is no parsing rule for the token, it will be left
