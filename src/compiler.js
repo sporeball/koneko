@@ -40,24 +40,6 @@ function resolveDefinition (definition) {
   } else {
     value = valueFromNode(definition.value);
   }
-  // make sure that the stated and actual type match
-  // the app type is a special case, as it takes a list
-  if (definition.objectType === 'app') {
-    // assert that a list was given
-    if (typeOf(value) !== 'list') {
-      throw new Error(
-        `compiler: object of type app assigned value of type ${typeOf(value)}`
-      );
-    }
-    // if this passes, change the type from 'list' to 'app'
-    value.type = 'app';
-  } else {
-    if (typeOf(value) !== value.type) {
-      throw new Error(
-        `compiler: object of type ${value.type} assigned value of type ${typeOf(value)}`
-      );
-    }
-  }
   // add the object to koneko's global space
   globalThis.koneko.objects[definition.identifier] = value;
   // console.log('objects:');
