@@ -1,4 +1,3 @@
-import { isCommandKeyword, isTypeKeyword } from './util.js';
 import logger from './logger.js';
 
 /**

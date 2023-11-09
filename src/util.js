@@ -1,26 +1,6 @@
 import commands from './commands.js';
 
 /**
- * return whether a string is a type keyword
- * @param {string} str
- */
-export function isTypeKeyword (str) {
-  return (
-    str === 'int' ||
-    str === 'str' ||
-    str === 'app'
-  );
-}
-
-/**
- * return whether a string is a command keyword
- * @param {string} str
- */
-export function isCommandKeyword (str) {
-  return Object.keys(commands).includes(str);
-}
-
-/**
  * return the type of a value
  * @param {any} value
  */
